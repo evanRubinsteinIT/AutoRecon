@@ -27,3 +27,16 @@ nucleiScan(){
 	nuclei -l $domain/subs/Httprobe.txt -t generic-detections -c 100 -o $domain/recon/Generic.txt
 }
 nucleiScan
+
+spidering(){
+	cat $domain/subs/Httprobe.txt | gospider |tee $domain/recon/spider.txt
+	cat $domain/recon/spider.txt | gf xss | tee $domain/recon/xss.txt
+	cat $domain/recon/spider.txt | gf sqli | tee $domain/recon/sqli.txt
+	cat $domain/recon/spider.txt | gf idor | tee $domain/recon/idor.txt
+	cat $domain/recon/spider.txt | gf img-traversal |tee $domain/recon/traversal.txt
+	cat $domain/recon/spider.txt | gf interestingEXT |tee $domain/recon/interestingSubs.txt
+	cat $domain/recon/spider.txt | gf interestingsubs |tee $domain/recon/interestingSubs.txt
+	cat $domain/recon/spider.txt| gf rce | tee $domain/recon/rce.txt
+	cat $domain/recon/spider.txt | gf debug_logic | tee $domain/recon/debug.txt
+}
+spidering
