@@ -7,6 +7,9 @@ In order for the script to work, you need:
 - Subfinder
 - Amass
 - Httprobe 
+- Gospider
+- gf 
+-Gf-Patterns
 
 Installation:
 - Ensure that you have the git command installed 
