@@ -7,8 +7,9 @@ read domain
 subdomainEnum(){
 	mkdir -p $domain $domain/subs $domain/recon
 	subfinder -d $domain -o $domain/subs/SubfinderResults.txt
-	amass enum -d  $domain -o $domain/subs/amassResults.txt
+	assetfinder -subs-only  $domain | tee $domain/subs/assetFinderResults.txt
 	cat $domain/subs/*.txt > $domain/subs/allSubsFound.txt
+	uniq allSubsFound.txt
 }
 subdomainEnum
 
@@ -18,13 +19,12 @@ subdomainValidation(){
 subdomainValidation
 
 nucleiScan(){
-	nuclei -l $domain/subs/Httprobe.txt -t cves -c 100 -o $domain/recon/CVEs.txt
-	nuclei -l $domain/subs/Httprobe.txt -t vulnerabilities -c 100 -o $domain/recon/Vulners.txt
-	nuclei -l $domain/subs/Httprobe.txt -t security-misconfiguration -c 100 -o $domain/recon/Misconfig.txt
-	nuclei -l $domain/subs/Httprobe.txt -t default-credentials -c 100 -o $domain/recon/DefaultCreds.txt
-	nuclei -l $domain/subs/Httprobe.txt -t files -c 100 -o $domain/recon/Files.txt
-	nuclei -l $domain/subs/Httprobe.txt -t subdomain-takeover -c 100 -o $domain/recon/SubsTakeover.txt
-	nuclei -l $domain/subs/Httprobe.txt -t generic-detections -c 100 -o $domain/recon/Generic.txt
+	nuclei -l $domain/subs/Httprobe.txt -t /home/username/nuclei-templates -c 100 -o $domain/recon/Nuclei.txt
+	cat $domain/recon/Nuclei.txt | grep high | tee high.txt
+	cat $domain/recon/Nuclei.txt | grep medium | tee medium.txt
+	cat $domain/recon/Nuclei.txt | grep low | tee low.txt
+	cat $domain/recon/Nuclei.txt | grep critical | critical.txt
+
 }
 nucleiScan
 
