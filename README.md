@@ -5,7 +5,7 @@ Requirements:
 In order for the script to work, you need:
 - Nuclei
 - Subfinder
-- Amass
+- Assetfinder
 - Httprobe 
 - Gospider
 - gf 
