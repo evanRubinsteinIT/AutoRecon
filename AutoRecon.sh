@@ -8,22 +8,22 @@ subdomainEnum(){
 	mkdir -p $domain $domain/subs $domain/recon
 	subfinder -d $domain -o $domain/subs/SubfinderResults.txt
 	assetfinder -subs-only  $domain | tee $domain/subs/assetFinderResults.txt
-	cat $domain/subs/*.txt > $domain/subs/allSubsFound.txt
+	cat $domain/subs/*.txt | tee $domain/subs/allSubsFound.txt
 	uniq allSubsFound.txt
 }
 subdomainEnum
 
 subdomainValidation(){
-	cat $domain/subs/allSubsFound.txt |httprobe > $domain/subs/Httprobe.txt
+	cat $domain/subs/allSubsFound.txt |httprobe | tee $domain/subs/Httprobe.txt
 }
 subdomainValidation
 
 nucleiScan(){
 	nuclei -l $domain/subs/Httprobe.txt -t /home/username/nuclei-templates -c 100 -o $domain/recon/Nuclei.txt
-	cat $domain/recon/Nuclei.txt | grep high | tee high.txt
-	cat $domain/recon/Nuclei.txt | grep medium | tee medium.txt
-	cat $domain/recon/Nuclei.txt | grep low | tee low.txt
-	cat $domain/recon/Nuclei.txt | grep critical | critical.txt
+	cat $domain/recon/Nuclei.txt | grep high | tee $domain/recon/high.txt
+	cat $domain/recon/Nuclei.txt | grep medium | tee $domain/recon/medium.txt
+	cat $domain/recon/Nuclei.txt | grep low | tee $domain/recon/low.txt
+	cat $domain/recon/Nuclei.txt | grep critical | $domain/recon/critical.txt
 
 }
 nucleiScan
