@@ -7,7 +7,10 @@ In order for the script to work, you need:
 - Subfinder
 - Assetfinder
 - Httprobe 
-- Gospider
+- Waybackurls
+- EyeWitness
+- Dalfox
+- SecretFinder
 - gf 
 - Gf Patterns 
 
