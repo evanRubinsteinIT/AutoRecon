@@ -9,34 +9,33 @@ subdomainEnum(){
 	subfinder -d $domain -o $domain/subs/SubfinderResults.txt
 	assetfinder -subs-only  $domain | tee $domain/subs/assetFinderResults.txt
 	cat $domain/subs/*.txt | tee $domain/subs/allSubsFound.txt
-	uniq allSubsFound.txt
+	uniq $domain/subs/allSubsFound.txt
 }
 subdomainEnum
 
 subdomainValidation(){
 	cat $domain/subs/allSubsFound.txt |httprobe | tee $domain/subs/Httprobe.txt
+	python3 EyeWitness.py --web -f $domain/subs/Httprobe.txt 
 }
 subdomainValidation
 
 nucleiScan(){
-	nuclei -l $domain/subs/Httprobe.txt -t /home/username/nuclei-templates -c 100 -o $domain/recon/Nuclei.txt
-	cat $domain/recon/Nuclei.txt | grep high | tee $domain/recon/high.txt
-	cat $domain/recon/Nuclei.txt | grep medium | tee $domain/recon/medium.txt
-	cat $domain/recon/Nuclei.txt | grep low | tee $domain/recon/low.txt
-	cat $domain/recon/Nuclei.txt | grep critical | $domain/recon/critical.txt
-
+	nuclei -l $domain/subs/Httprobe.txt -t cves -t vulnerabilities -o $domain/recon/Nuclei.txt
 }
 nucleiScan
 
 spidering(){
-	cat $domain/subs/Httprobe.txt | gospider |tee $domain/recon/spider.txt
+	cat $domain/subs/Httprobe.txt | waybackurls |tee $domain/recon/spider.txt
 	cat $domain/recon/spider.txt | gf xss | tee $domain/recon/xss.txt
 	cat $domain/recon/spider.txt | gf sqli | tee $domain/recon/sqli.txt
-	cat $domain/recon/spider.txt | gf idor | tee $domain/recon/idor.txt
 	cat $domain/recon/spider.txt | gf img-traversal |tee $domain/recon/traversal.txt
-	cat $domain/recon/spider.txt | gf interestingEXT |tee $domain/recon/interestingSubs.txt
-	cat $domain/recon/spider.txt | gf interestingsubs |tee $domain/recon/interestingSubs.txt
-	cat $domain/recon/spider.txt| gf rce | tee $domain/recon/rce.txt
-	cat $domain/recon/spider.txt | gf debug_logic | tee $domain/recon/debug.txt
+	cat $domain/recon/spider.txt | grep "\.apk" | tee $domain/recon/APK.txt
+	cat $domain/recon/spider.txt | grep "\.js"| tee $domain/recon/JavaScript.txt
 }
 spidering
+
+XSS+DisclosureScan(){
+	cat $domain/recon/xss.txt | dalfox pipe --mass | tee $domain/recon/DalfoxScan.txt
+	cat $domain/recon/JavaScript.txt ||xargs -I %% bash -c 'python3 SecretFinder.py -i %% -o $domain/recon/SecretFinder.html'
+}
+
